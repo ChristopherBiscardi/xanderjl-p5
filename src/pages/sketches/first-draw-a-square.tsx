@@ -90,10 +90,54 @@ const draw: Draw = p5 => {
       palette
     )
   )
-
-  generate(p5, 3, palette)
-  rects.forEach(rect => rect.display())
-
+  function generate_fold(acc: Rectangle[] = [], r: Rectangle) {
+    let temp = []
+    const rand = p5.random(1)
+    if (rand < 0.25) {
+      temp.push(new Rectangle(p5, res, r.x, r.y, r.w * 0.5, r.h * 0.5, palette))
+      temp.push(
+        new Rectangle(
+          p5,
+          res,
+          r.x + r.w * 0.5,
+          r.y,
+          r.w * 0.5,
+          r.h * 0.5,
+          palette
+        )
+      )
+      temp.push(
+        new Rectangle(
+          p5,
+          res,
+          r.x,
+          r.y + r.h * 0.5,
+          r.w * 0.5,
+          r.h * 0.5,
+          palette
+        )
+      )
+      temp.push(
+        new Rectangle(
+          p5,
+          res,
+          r.x + r.w * 0.5,
+          r.y + r.h * 0.5,
+          r.w * 0.5,
+          r.h * 0.5,
+          palette
+        )
+      )
+      return acc.concat(temp.reduce(generate_fold, []))
+    } else {
+      return acc.concat(r)
+    }
+  }
+  let result = rects.reduce(generate_fold, rects)
+  console.log({ result })
+  // generate(p5, 3, palette)
+  result.forEach(rect => rect.display())
+  console.log(rects)
   signature(p5)
 }
 
